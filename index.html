@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fortune Cookies</title>
+<style>
+  :root {
+    --bg: #fff8ef; --ink: #3b2a1a; --muted: #8a7360;
+    --paper: #fffdf8; --cookie: #e8b25c; --cookie-dark: #c98f3a; --accent: #d9480f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #1d1712; --ink: #f4e9dc; --muted: #b49f8a; --paper: #2a221b; --accent: #ff8a4c; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink);
+    font-family: system-ui, -apple-system, sans-serif;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 48px 16px 24px; text-align: center;
+  }
+  h1 { font-size: clamp(1.8rem, 6vw, 2.6rem); margin: 0 0 6px; }
+  .sub { color: var(--muted); margin: 0 0 36px; }
+  .cookie {
+    font-size: 120px; line-height: 1; background: none; border: none; cursor: pointer;
+    transition: transform .2s; padding: 0;
+  }
+  .cookie:hover, .cookie:focus-visible { transform: rotate(-8deg) scale(1.06); outline: none; }
+  .cookie.crack { animation: crack .5s ease; }
+  @keyframes crack {
+    0% { transform: scale(1); } 30% { transform: scale(1.15) rotate(8deg); }
+    60% { transform: scale(.9) rotate(-8deg); } 100% { transform: scale(1); }
+  }
+  .slip {
+    margin-top: 24px; width: 100%; max-width: 520px; min-height: 120px;
+    background: var(--paper); border: 1px dashed var(--cookie-dark); border-radius: 6px;
+    padding: 20px 24px; box-shadow: 0 6px 20px rgba(0,0,0,.08);
+    opacity: 0; transform: translateY(-10px); transition: opacity .4s, transform .4s;
+  }
+  .slip.show { opacity: 1; transform: none; }
+  .fortune { font-family: Georgia, "Times New Roman", serif; font-size: 1.3rem; margin: 0 0 12px; }
+  .meta { color: var(--muted); font-size: .9rem; }
+  .meta a { color: inherit; }
+  .lucky { color: var(--accent); font-size: .8rem; letter-spacing: .08em; margin-top: 10px; }
+  .hint { color: var(--muted); font-size: .9rem; margin-top: 16px; }
+  footer { margin-top: auto; padding-top: 56px; max-width: 680px; color: var(--muted); font-size: .9rem; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 10px; }
+  .chip {
+    background: var(--paper); border: 1px solid var(--cookie); border-radius: 999px;
+    padding: 3px 10px; font-size: .8rem; color: var(--ink); text-decoration: none;
+  }
+  .chip:hover { border-color: var(--accent); }
+</style>
+</head>
+<body>
+  <h1>🥠 Fortune Cookies</h1>
+  <p class="sub">Every fortune here was added by someone through a pull request.</p>
+
+  <button class="cookie" id="cookie" aria-label="Crack a fortune cookie">🥠</button>
+  <p class="hint" id="hint">Click the cookie</p>
+
+  <div class="slip" id="slip" aria-live="polite">
+    <p class="fortune" id="fortune"></p>
+    <div class="meta" id="meta"></div>
+    <div class="lucky" id="lucky"></div>
+  </div>
+
+  <footer>
+    <div id="count">Loading fortunes…</div>
+    <div class="chips" id="chips"></div>
+  </footer>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  let fortunes = [];
+  let last = -1;
+
+  function luckyNumbers() {
+    const nums = new Set();
+    while (nums.size < 6) nums.add(1 + Math.floor(Math.random() * 49));
+    return [...nums].sort((a, b) => a - b).join(" · ");
+  }
+
+  function crack() {
+    if (!fortunes.length) return;
+    let i = Math.floor(Math.random() * fortunes.length);
+    if (fortunes.length > 1) while (i === last) i = Math.floor(Math.random() * fortunes.length);
+    last = i;
+    const f = fortunes[i];
+
+    const cookie = $("cookie");
+    cookie.classList.remove("crack"); void cookie.offsetWidth; cookie.classList.add("crack");
+
+    const slip = $("slip");
+    slip.classList.remove("show");
+    setTimeout(() => {
+      $("fortune").textContent = (f.emoji ? f.emoji + " " : "") + f.fortune;
+      const meta = $("meta");
+      meta.textContent = "from ";
+      const a = document.createElement("a");
+      a.href = "https://github.com/" + encodeURIComponent(f.author);
+      a.textContent = "@" + f.author;
+      a.target = "_blank"; a.rel = "noopener";
+      meta.appendChild(a);
+      $("lucky").textContent = "LUCKY NUMBERS  " + luckyNumbers();
+      slip.classList.add("show");
+      $("hint").textContent = "Click again for another one";
+    }, 250);
+  }
+
+  $("cookie").addEventListener("click", crack);
+
+  fetch("fortunes.json", { cache: "no-store" })
+    .then((r) => r.json())
+    .then((data) => {
+      fortunes = data;
+      $("count").textContent = fortunes.length
+        ? `${fortunes.length} fortune${fortunes.length === 1 ? "" : "s"} baked by:`
+        : "No fortunes yet. Be the first to open a pull request!";
+      const chips = $("chips");
+      fortunes.forEach((f) => {
+        const c = document.createElement("a");
+        c.className = "chip";
+        c.href = "https://github.com/" + encodeURIComponent(f.author);
+        c.target = "_blank"; c.rel = "noopener";
+        c.textContent = (f.emoji || "🥠") + " " + f.author;
+        chips.appendChild(c);
+      });
+    })
+    .catch(() => { $("count").textContent = "Couldn't load fortunes."; });
+</script>
+</body>
+</html>
