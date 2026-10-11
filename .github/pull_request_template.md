@@ -1,10 +1,10 @@
-## My fortune 🥠
+## My fortune or quote
 
-<!-- Write your fortune here too -->
+<!-- Write it here too -->
 
 ## Checklist
 
 - [ ] I worked on my own branch, not on main
 - [ ] I added only one file: `fortunes/my-github-username.json`
-- [ ] My fortune is kind, fun, and 140 characters or less
+- [ ] It is kind, fun, and 200 characters or less
 - [ ] I asked a classmate to review my pull request

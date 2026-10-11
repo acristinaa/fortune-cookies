@@ -7,13 +7,24 @@ const OUT = "_site";
 fs.mkdirSync(OUT, { recursive: true });
 
 const fortunes = [];
-for (const file of fs.readdirSync(SRC).filter((f) => f.endsWith(".json")).sort()) {
+for (const file of fs
+  .readdirSync(SRC)
+  .filter((f) => f.endsWith(".json"))
+  .sort()) {
   try {
     const data = JSON.parse(fs.readFileSync(path.join(SRC, file), "utf8"));
-    if (typeof data.fortune !== "string" || !data.fortune.trim()) throw new Error("missing fortune");
+    if (data.type !== "fortune" && data.type !== "quote")
+      throw new Error('"type" must be fortune or quote');
+    if (typeof data.text !== "string" || !data.text.trim())
+      throw new Error("missing text");
     fortunes.push({
-      author: path.basename(file, ".json"),
-      fortune: data.fortune.trim(),
+      github: path.basename(file, ".json"),
+      type: data.type,
+      text: data.text.trim(),
+      author:
+        data.type === "quote" && typeof data.author === "string"
+          ? data.author.trim()
+          : "",
       emoji: typeof data.emoji === "string" ? data.emoji.trim() : "",
     });
   } catch (err) {
@@ -21,6 +32,9 @@ for (const file of fs.readdirSync(SRC).filter((f) => f.endsWith(".json")).sort()
   }
 }
 
-fs.writeFileSync(path.join(OUT, "fortunes.json"), JSON.stringify(fortunes, null, 2));
+fs.writeFileSync(
+  path.join(OUT, "fortunes.json"),
+  JSON.stringify(fortunes, null, 2),
+);
 fs.copyFileSync("index.html", path.join(OUT, "index.html"));
 console.log(`Built site with ${fortunes.length} fortune(s).`);

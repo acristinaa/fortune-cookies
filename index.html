@@ -1,133 +1,261 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fortune Cookies</title>
-<style>
-  :root {
-    --bg: #fff8ef; --ink: #3b2a1a; --muted: #8a7360;
-    --paper: #fffdf8; --cookie: #e8b25c; --cookie-dark: #c98f3a; --accent: #d9480f;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #1d1712; --ink: #f4e9dc; --muted: #b49f8a; --paper: #2a221b; --accent: #ff8a4c; }
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink);
-    font-family: system-ui, -apple-system, sans-serif;
-    display: flex; flex-direction: column; align-items: center;
-    padding: 48px 16px 24px; text-align: center;
-  }
-  h1 { font-size: clamp(1.8rem, 6vw, 2.6rem); margin: 0 0 6px; }
-  .sub { color: var(--muted); margin: 0 0 36px; }
-  .cookie {
-    font-size: 120px; line-height: 1; background: none; border: none; cursor: pointer;
-    transition: transform .2s; padding: 0;
-  }
-  .cookie:hover, .cookie:focus-visible { transform: rotate(-8deg) scale(1.06); outline: none; }
-  .cookie.crack { animation: crack .5s ease; }
-  @keyframes crack {
-    0% { transform: scale(1); } 30% { transform: scale(1.15) rotate(8deg); }
-    60% { transform: scale(.9) rotate(-8deg); } 100% { transform: scale(1); }
-  }
-  .slip {
-    margin-top: 24px; width: 100%; max-width: 520px; min-height: 120px;
-    background: var(--paper); border: 1px dashed var(--cookie-dark); border-radius: 6px;
-    padding: 20px 24px; box-shadow: 0 6px 20px rgba(0,0,0,.08);
-    opacity: 0; transform: translateY(-10px); transition: opacity .4s, transform .4s;
-  }
-  .slip.show { opacity: 1; transform: none; }
-  .fortune { font-family: Georgia, "Times New Roman", serif; font-size: 1.3rem; margin: 0 0 12px; }
-  .meta { color: var(--muted); font-size: .9rem; }
-  .meta a { color: inherit; }
-  .lucky { color: var(--accent); font-size: .8rem; letter-spacing: .08em; margin-top: 10px; }
-  .hint { color: var(--muted); font-size: .9rem; margin-top: 16px; }
-  footer { margin-top: auto; padding-top: 56px; max-width: 680px; color: var(--muted); font-size: .9rem; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 10px; }
-  .chip {
-    background: var(--paper); border: 1px solid var(--cookie); border-radius: 999px;
-    padding: 3px 10px; font-size: .8rem; color: var(--ink); text-decoration: none;
-  }
-  .chip:hover { border-color: var(--accent); }
-</style>
-</head>
-<body>
-  <h1>🥠 Fortune Cookies</h1>
-  <p class="sub">Every fortune here was added by someone through a pull request.</p>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fortune Cookie</title>
+    <style>
+      :root {
+        --bg: #fff8ef;
+        --ink: #3b2a1a;
+        --muted: #8a7360;
+        --paper: #fffdf8;
+        --cookie: #e8b25c;
+        --cookie-dark: #c98f3a;
+        --accent: #d9480f;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #1d1712;
+          --ink: #f4e9dc;
+          --muted: #b49f8a;
+          --paper: #2a221b;
+          --accent: #ff8a4c;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--ink);
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 16px;
+        text-align: center;
+      }
+      h1 {
+        font-family: "Courier New", Courier, monospace;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        font-size: clamp(2rem, 7vw, 3rem);
+        margin: 0 0 6px;
+      }
+      .sub {
+        color: var(--muted);
+        margin: 0 0 40px;
+      }
+      .cookie {
+        font-size: clamp(160px, 40vw, 260px);
+        line-height: 1.2;
+        margin-top: 24px;
+        padding: 0;
+        background: none;
+        border: none;
+        cursor: pointer;
+        user-select: none;
+        transition: transform 0.2s;
+      }
+      .cookie:hover,
+      .cookie:focus-visible {
+        transform: rotate(-8deg) scale(1.06);
+        outline: none;
+      }
+      .cookie.crack {
+        animation: crack 0.5s ease;
+      }
+      @keyframes crack {
+        0% {
+          transform: scale(1);
+        }
+        30% {
+          transform: scale(1.15) rotate(8deg);
+        }
+        60% {
+          transform: scale(0.9) rotate(-8deg);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      .slip {
+        --paper-ink: #3b2a1a;
+        --paper-muted: #8a7360;
+        position: relative;
+        margin-top: 24px;
+        width: 100%;
+        max-width: 520px;
+        min-height: 120px;
+        padding: 26px 32px 22px;
+        color: var(--paper-ink);
+        background:
+          repeating-linear-gradient(
+            to bottom,
+            transparent 0 31px,
+            rgba(150, 110, 60, 0.13) 31px 32px
+          ),
+          linear-gradient(#fdf6e3, #f6ebcb);
+        border-radius: 2px;
+        box-shadow:
+          0 1px 1px rgba(0, 0, 0, 0.12),
+          0 10px 24px rgba(0, 0, 0, 0.18);
+        transform-origin: top center;
+        visibility: hidden;
+      }
+      .slip::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 14px;
+        width: 1px;
+        background: rgba(200, 80, 60, 0.35);
+      }
+      .slip.show {
+        visibility: visible;
+        animation: unroll 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+      @keyframes unroll {
+        0% {
+          clip-path: inset(0 0 100% 0);
+          transform: translateY(-60px) rotate(-3deg) scaleY(0.4);
+          opacity: 0;
+        }
+        40% {
+          opacity: 1;
+        }
+        70% {
+          clip-path: inset(0 0 -10px 0);
+          transform: translateY(6px) rotate(1deg) scaleY(1);
+        }
+        100% {
+          clip-path: inset(0 0 -10px 0);
+          transform: translateY(0) rotate(-0.6deg);
+          opacity: 1;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .slip.show {
+          animation: none;
+        }
+      }
+      .fortune {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.35rem;
+        line-height: 1.5;
+        margin: 0 0 12px;
+      }
+      .meta {
+        color: var(--paper-muted);
+        font-size: 0.9rem;
+      }
+      .meta a {
+        color: inherit;
+      }
+      .lucky {
+        color: #b5400f;
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        margin-top: 10px;
+      }
+      .hint {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-top: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Fortune Cookie</h1>
 
-  <button class="cookie" id="cookie" aria-label="Crack a fortune cookie">🥠</button>
-  <p class="hint" id="hint">Click the cookie</p>
+    <button class="cookie" id="cookie" aria-label="Crack the cookie">🥠</button>
+    <p class="hint" id="hint">Click the cookie to crack it</p>
 
-  <div class="slip" id="slip" aria-live="polite">
-    <p class="fortune" id="fortune"></p>
-    <div class="meta" id="meta"></div>
-    <div class="lucky" id="lucky"></div>
-  </div>
+    <div class="slip" id="slip" aria-live="polite">
+      <p class="fortune" id="fortune"></p>
+      <div class="meta" id="meta"></div>
+      <div class="lucky" id="lucky"></div>
+    </div>
 
-  <footer>
-    <div id="count">Loading fortunes…</div>
-    <div class="chips" id="chips"></div>
-  </footer>
+    <script>
+      const $ = (id) => document.getElementById(id);
+      let classFortunes = [];
+      let lastPick = -1;
 
-<script>
-  const $ = (id) => document.getElementById(id);
-  let fortunes = [];
-  let last = -1;
+      const surprises = [
+        "A small step today opens a door you haven’t noticed yet.",
+        "The friend you’ve been meaning to call is thinking of you too.",
+        "Patience is bitter, but its fruit is sweet.",
+        "You will soon find something you thought was lost.",
+        "Your next good idea will arrive while you’re doing something ordinary.",
+        "A pleasant surprise is waiting for you on the other side of a decision.",
+        "Do not fear the unknown. Most of it turns out to be a good story.",
+        "Someone admires you more than you realize.",
+        "The best time to begin was yesterday. The second best is now.",
+        "Good fortune follows those who share their snacks.",
+        "Your kindness will return to you in an unexpected form.",
+        "A journey of a thousand miles begins with an overpacked suitcase. Travel lighter.",
+      ];
 
-  function luckyNumbers() {
-    const nums = new Set();
-    while (nums.size < 6) nums.add(1 + Math.floor(Math.random() * 49));
-    return [...nums].sort((a, b) => a - b).join(" · ");
-  }
+      function luckyNumbers() {
+        const nums = new Set();
+        while (nums.size < 6) nums.add(1 + Math.floor(Math.random() * 49));
+        return [...nums].sort((a, b) => a - b).join(" \u00B7 ");
+      }
 
-  function crack() {
-    if (!fortunes.length) return;
-    let i = Math.floor(Math.random() * fortunes.length);
-    if (fortunes.length > 1) while (i === last) i = Math.floor(Math.random() * fortunes.length);
-    last = i;
-    const f = fortunes[i];
+      function pick(list, last) {
+        let i = Math.floor(Math.random() * list.length);
+        if (list.length > 1)
+          while (i === last) i = Math.floor(Math.random() * list.length);
+        return i;
+      }
 
-    const cookie = $("cookie");
-    cookie.classList.remove("crack"); void cookie.offsetWidth; cookie.classList.add("crack");
+      function show(f) {
+        const cookie = $("cookie");
+        cookie.classList.remove("crack");
+        void cookie.offsetWidth;
+        cookie.classList.add("crack");
 
-    const slip = $("slip");
-    slip.classList.remove("show");
-    setTimeout(() => {
-      $("fortune").textContent = (f.emoji ? f.emoji + " " : "") + f.fortune;
-      const meta = $("meta");
-      meta.textContent = "from ";
-      const a = document.createElement("a");
-      a.href = "https://github.com/" + encodeURIComponent(f.author);
-      a.textContent = "@" + f.author;
-      a.target = "_blank"; a.rel = "noopener";
-      meta.appendChild(a);
-      $("lucky").textContent = "LUCKY NUMBERS  " + luckyNumbers();
-      slip.classList.add("show");
-      $("hint").textContent = "Click again for another one";
-    }, 250);
-  }
+        const slip = $("slip");
+        slip.classList.remove("show");
+        setTimeout(() => {
+          const text =
+            f.type === "quote" ? "\u201C" + f.text + "\u201D" : f.text;
+          $("fortune").textContent = (f.emoji ? f.emoji + " " : "") + text;
+          const meta = $("meta");
+          meta.textContent = "";
+          if (f.type === "quote") meta.append("\u2014 " + f.author);
+          $("lucky").textContent = "LUCKY NUMBERS  " + luckyNumbers();
+          slip.classList.add("show");
+          $("hint").textContent = "Crack the cookie again for another fortune";
+        }, 250);
+      }
 
-  $("cookie").addEventListener("click", crack);
-
-  fetch("fortunes.json", { cache: "no-store" })
-    .then((r) => r.json())
-    .then((data) => {
-      fortunes = data;
-      $("count").textContent = fortunes.length
-        ? `${fortunes.length} fortune${fortunes.length === 1 ? "" : "s"} baked by:`
-        : "No fortunes yet. Be the first to open a pull request!";
-      const chips = $("chips");
-      fortunes.forEach((f) => {
-        const c = document.createElement("a");
-        c.className = "chip";
-        c.href = "https://github.com/" + encodeURIComponent(f.author);
-        c.target = "_blank"; c.rel = "noopener";
-        c.textContent = (f.emoji || "🥠") + " " + f.author;
-        chips.appendChild(c);
+      $("cookie").addEventListener("click", () => {
+        const pool = [
+          ...classFortunes,
+          ...surprises.map((text) => ({ type: "fortune", text })),
+        ];
+        lastPick = pick(pool, lastPick);
+        show(pool[lastPick]);
       });
-    })
-    .catch(() => { $("count").textContent = "Couldn't load fortunes."; });
-</script>
-</body>
+
+      fetch("fortunes.json", { cache: "no-store" })
+        .then((r) => r.json())
+        .then((data) => {
+          classFortunes = data;
+        })
+        .catch(() => {
+          $("hint").textContent = "Couldn't load the class fortunes.";
+        });
+    </script>
+  </body>
 </html>
