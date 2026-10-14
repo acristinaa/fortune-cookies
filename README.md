@@ -1,6 +1,6 @@
 # Fortune Cookie
 
-A tiny website with two buttons: **From the class** shows a fortune or quote
+A tiny website with two cookies: the orange-labeled **From the class** cookie shows a fortune or quote
 written by a student (through a pull request), and **Surprise me** shows a fortune
 made by the page itself.
 
@@ -30,8 +30,7 @@ A fortune:
 ```json
 {
   "type": "fortune",
-  "text": "Your next bug will teach you something wonderful.",
-  "emoji": "🚀"
+  "text": "Your next bug will teach you something wonderful."
 }
 ```
 
@@ -41,17 +40,15 @@ Or a quote:
 {
   "type": "quote",
   "text": "We delight in the beauty of the butterfly.",
-  "author": "Maya Angelou",
-  "emoji": "✨"
+  "author": "someone"
 }
 ```
 
 Rules:
 
 - `type`: `"fortune"` or `"quote"`.
-- `text`: your message, **200 characters max**. Keep it kind and fun.
+- `text`: your message, **200 characters max**. Keep it kind and fun, and no emojis.
 - `author`: required for a quote, not used for a fortune.
-- `emoji`: one emoji (optional).
 - Don't touch any other file.
 
 Ideas: advice, a funny prediction, a tiny poem, a coding superstition.
@@ -80,4 +77,4 @@ Open a classmate's pull request → **Files changed** → click **+** on a line 
 ### 7. Watch it go live
 
 Don't merge it yourself: your teacher merges it live. About a minute later the site
-rebuilds. Press **From the class** until you find yours!
+rebuilds. Crack the **From the class** cookie until you find yours (its slip is blue and shows your GitHub name)!

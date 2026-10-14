@@ -25,7 +25,6 @@ for (const file of fs
         data.type === "quote" && typeof data.author === "string"
           ? data.author.trim()
           : "",
-      emoji: typeof data.emoji === "string" ? data.emoji.trim() : "",
     });
   } catch (err) {
     console.warn(`Skipping ${file}: ${err.message}`);

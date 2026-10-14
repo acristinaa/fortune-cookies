@@ -51,7 +51,7 @@ for (const file of changed) {
     continue;
   }
 
-  const allowed = ["type", "text", "author", "emoji"];
+  const allowed = ["type", "text", "author"];
   for (const key of Object.keys(data)) {
     if (!allowed.includes(key))
       errors.push(
@@ -81,12 +81,6 @@ for (const file of changed) {
     errors.push(
       `"${name}": a fortune doesn't need an "author". Remove it, or change "type" to "quote".`,
     );
-  }
-  if (
-    data.emoji !== undefined &&
-    (typeof data.emoji !== "string" || [...data.emoji].length > 4)
-  ) {
-    errors.push(`"${name}": "emoji" should be a single emoji.`);
   }
 }
 

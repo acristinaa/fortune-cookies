@@ -53,19 +53,49 @@
         color: var(--muted);
         margin: 0 0 40px;
       }
-      .cookie {
-        font-size: clamp(160px, 40vw, 260px);
-        line-height: 1.2;
-        margin-top: 24px;
+      .cookies {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px 40px;
+        margin-top: 16px;
+      }
+      .pick {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
         padding: 0;
         background: none;
         border: none;
         cursor: pointer;
         user-select: none;
+        color: var(--ink);
+        font: inherit;
+      }
+      .cookie {
+        font-size: clamp(110px, 28vw, 190px);
+        line-height: 1.2;
         transition: transform 0.2s;
       }
-      .cookie:hover,
-      .cookie:focus-visible {
+      .label {
+        font-family: "Courier New", Courier, monospace;
+        font-weight: 700;
+        font-size: 0.95rem;
+        padding: 6px 14px;
+        border-radius: 999px;
+        border: 2px solid var(--cookie-dark);
+      }
+      .pick[data-source="class"] .label {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      .pick:focus-visible {
+        outline: none;
+      }
+      .pick:hover .cookie,
+      .pick:focus-visible .cookie {
         transform: rotate(-8deg) scale(1.06);
         outline: none;
       }
@@ -153,6 +183,35 @@
         line-height: 1.5;
         margin: 0 0 12px;
       }
+      .tag {
+        display: inline-block;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        margin-bottom: 10px;
+        padding: 2px 10px;
+        border-radius: 999px;
+        border: 1.5px solid #b5400f;
+        color: #b5400f;
+      }
+      .slip.from-class {
+        background:
+          repeating-linear-gradient(
+            to bottom,
+            transparent 0 31px,
+            rgba(60, 90, 160, 0.14) 31px 32px
+          ),
+          linear-gradient(#eef3fd, #dde7f8);
+      }
+      .slip.from-class::before {
+        background: rgba(60, 90, 160, 0.4);
+      }
+      .slip.from-class .tag {
+        background: #d9480f;
+        border-color: #d9480f;
+        color: #fff;
+      }
       .meta {
         color: var(--paper-muted);
         font-size: 0.9rem;
@@ -176,10 +235,20 @@
   <body>
     <h1>Fortune Cookie</h1>
 
-    <button class="cookie" id="cookie" aria-label="Crack the cookie">🥠</button>
-    <p class="hint" id="hint">Click the cookie to crack it</p>
+    <div class="cookies">
+      <button class="pick" id="classPick" data-source="class">
+        <span class="cookie">🥠</span>
+        <span class="label">From the class</span>
+      </button>
+      <button class="pick" id="randomPick" data-source="random">
+        <span class="cookie">🥠</span>
+        <span class="label">Surprise me</span>
+      </button>
+    </div>
+    <p class="hint" id="hint">Pick a cookie to crack it</p>
 
     <div class="slip" id="slip" aria-live="polite">
+      <div class="tag" id="tag"></div>
       <p class="fortune" id="fortune"></p>
       <div class="meta" id="meta"></div>
       <div class="lucky" id="lucky"></div>
@@ -188,7 +257,6 @@
     <script>
       const $ = (id) => document.getElementById(id);
       let classFortunes = [];
-      let lastPick = -1;
 
       const surprises = [
         "A small step today opens a door you haven’t noticed yet.",
@@ -218,34 +286,53 @@
         return i;
       }
 
-      function show(f) {
-        const cookie = $("cookie");
+      function show(f, btn, fromClass) {
+        const cookie = btn.querySelector(".cookie");
         cookie.classList.remove("crack");
         void cookie.offsetWidth;
         cookie.classList.add("crack");
 
         const slip = $("slip");
-        slip.classList.remove("show");
+        slip.classList.remove("show", "from-class");
         setTimeout(() => {
           const text =
             f.type === "quote" ? "\u201C" + f.text + "\u201D" : f.text;
-          $("fortune").textContent = (f.emoji ? f.emoji + " " : "") + text;
+          $("fortune").textContent = text;
           const meta = $("meta");
           meta.textContent = "";
           if (f.type === "quote") meta.append("\u2014 " + f.author);
-          $("lucky").textContent = "LUCKY NUMBERS  " + luckyNumbers();
+          if (fromClass) {
+            $("tag").textContent = "FROM THE CLASS";
+            $("lucky").textContent = "Shared by @" + f.github;
+            slip.classList.add("from-class");
+          } else {
+            $("tag").textContent = "SURPRISE";
+            $("lucky").textContent = "LUCKY NUMBERS  " + luckyNumbers();
+          }
           slip.classList.add("show");
-          $("hint").textContent = "Crack the cookie again for another fortune";
+          $("hint").textContent = "Crack a cookie again for another one";
         }, 250);
       }
 
-      $("cookie").addEventListener("click", () => {
-        const pool = [
-          ...classFortunes,
-          ...surprises.map((text) => ({ type: "fortune", text })),
-        ];
-        lastPick = pick(pool, lastPick);
-        show(pool[lastPick]);
+      const last = { class: -1, random: -1 };
+
+      $("classPick").addEventListener("click", (e) => {
+        if (!classFortunes.length) {
+          $("hint").textContent =
+            "No class fortunes yet. Be the first to add one!";
+          return;
+        }
+        last.class = pick(classFortunes, last.class);
+        show(classFortunes[last.class], e.currentTarget, true);
+      });
+
+      $("randomPick").addEventListener("click", (e) => {
+        last.random = pick(surprises, last.random);
+        show(
+          { type: "fortune", text: surprises[last.random] },
+          e.currentTarget,
+          false,
+        );
       });
 
       fetch("fortunes.json", { cache: "no-store" })
